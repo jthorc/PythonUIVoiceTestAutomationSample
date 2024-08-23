@@ -5,6 +5,10 @@ import sys
 import traceback
 from io import StringIO
 import subprocess
+from tkinter import filedialog
+import json
+import datetime
+import time
 
 class Console(tk.Text):
     def __init__(self, master=None, **kwargs):
@@ -16,14 +20,15 @@ class Console(tk.Text):
         self.tag_configure('log', foreground='blue')
         self.tag_configure('error', foreground='red')
         self.tag_configure('info', foreground='green')
+        self.tag_configure('warning', foreground='orange')
 
-        self.prompt = "Live Log: "
+        self.prompt = "Live Log:\n"
         self.console = code.InteractiveConsole()
         self.output_buffer = StringIO()
         self.update_prompt()
 
     def update_prompt(self):
-        self.insert(tk.END, self.prompt)
+        self.append_log(self.prompt, 'info')
         self.mark_set(tk.INSERT, tk.END)
         self.see(tk.END)
 
@@ -58,12 +63,12 @@ class Console(tk.Text):
 
         output = self.output_buffer.getvalue()
         if output:
-            self.insert(tk.END, output, 'info')
+            self.append_log(output, 'warning')
         self.update_prompt()
 
     def append_log(self, message, tag=None):
         self.config(state=tk.NORMAL)
-        self.insert(tk.END, message, tag)
+        self.insert(tk.END, f'{message}\n', tag)
         self.config(state=tk.DISABLED)
         self.see(tk.END)
 
@@ -71,43 +76,100 @@ class Application(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Tkinter Combined Console and Log Window")
-        self.geometry("600x500")
+        self.title("Automation Panel")
+        self.geometry("650x500")
 
         # Create the main frame
         main_frame = ttk.Frame(self)
-        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        main_frame.grid(row=0, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
+
+        # Configure rows and columns in the grid
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        main_frame.grid_rowconfigure(1, weight=1)
+        main_frame.grid_columnconfigure(0, weight=1)
+
+        # Create a Label widget
+        #label_0 = tk.Label(main_frame, text="Log:", font=("bold"), fg="Black")
+        # Place the Label in the window
+        #label_0.grid(row=0, column=0, sticky="W")
 
         # Create the combined log and console window (Text widget)
         self.console = Console(main_frame, wrap=tk.WORD)
-        self.console.pack(fill=tk.BOTH, expand=True)
+        self.console.grid(row=1, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
 
-        # Create a button to add a log message (placed above the console)
-        log_button = ttk.Button(main_frame, text="Add Log Entry", command=self.add_log_entry)
-        log_button.pack(side=tk.LEFT, pady=10)
+        # Create buttons and place them in the grid
+        log_button = ttk.Button(main_frame, text="Add Log", command=self.add_log_entry)
+        log_button.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
 
-        # Create a button to clear the log message (placed beside the log button)
-        clear_button = ttk.Button(main_frame, text="Clear Log Entry", command=self.clear_log_entry)
-        clear_button.pack(side=tk.LEFT, pady=10)
+        clear_button = ttk.Button(main_frame, text="Clear Log", command=self.clear_log_entry)
+        clear_button.grid(row=2, column=1, padx=5, pady=5,sticky="nsew")
 
-        # Create a button to check ADB connection
         adb_button = ttk.Button(main_frame, text="Check ADB Connection", command=self.check_adb_connection)
-        adb_button.pack(side=tk.LEFT, pady=10)
+        adb_button.grid(row=2, column=2, padx=5, pady=5,sticky="nsew")
+
+        read_button = ttk.Button(main_frame, text="Read Test Procedure", command=self.read_test_procedure)
+        read_button.grid(row=2, column=3, padx=5, pady=5,sticky="nsew")
+
+        check_system_time = ttk.Button(main_frame, text="Check Sys Time", command=self.check_sys_time)
+        check_system_time.grid(row=2, column=4, padx=5, pady=5,sticky="nsew")
 
     def add_log_entry(self):
         # Example log entry
-        log_message = "This is a log message.\n"
-        self.console.append_log(log_message, 'log')
+        log_message = "This is a log message."
+        self.console.append_log(f'{log_message}\n', 'log')
 
     def clear_log_entry(self):
         # Clear the messages in the combined window
         self.console.config(state=tk.NORMAL)
         self.console.delete(1.0, tk.END)
         self.console.config(state=tk.DISABLED)
+    
+    def read_test_procedure(self):
+        initial_directory = r'C:\Users\jiang\Documents\GitHub\Shuochengwork'
+        # Open file dialog to select a JSON file
+        file_path = filedialog.askopenfilename(
+            initialdir=initial_directory,
+            title="Select a JSON file",
+            filetypes=[("JSON files", "*.json")],
+        )
+
+        if file_path:
+            try:
+                with open(file_path, 'r') as json_file:
+                    data = json.load(json_file)
+                    self.console.append_log("JSON data loaded successfully:",'info')
+                    self.console.append_log(data, 'log')
+                    return data  # Returns the dictionary
+            except json.JSONDecodeError as e:
+                self.console.append_log(f"Error decoding JSON: {e}",'error')
+            except Exception as e:
+                self.console.append_log(f"An error occurred: {e}",'error')
+        else:
+            self.console.append_log("No file was selected.", 'warning')
+
+    def check_sys_time(self):
+        try:
+            # Get the current local time
+            current_time = datetime.datetime.now()
+            # Get the time zone offset from UTC (in seconds)
+            time_zone_offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
+            time_zone_offset_hours = time_zone_offset / 3600  # Convert to hours
+            # Get the name of the time zone
+            time_zone_name = time.tzname
+            self.console.append_log(f"Current Time: {current_time}\nTime Zone Offset (in hours): {time_zone_offset_hours}\nTime Zone Name: {time_zone_name}\n", 'info')
+        except Exception as e:
+            self.console.append_log(f'error: {e}','error')
+
+
 
     def check_adb_connection(self):
+        command = ['adb', 'devices']
+        command_title = 'Running adb command: ' 
+        self.console.append_log(f'{command_title} {command}', 'info')
         try:
-            result = subprocess.run(['adb', 'devices'], capture_output=True, text=True, check=True)
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
             output = result.stdout
         except subprocess.CalledProcessError as e:
             output = f"Error checking ADB connection: {e}\n{e.output}"
@@ -115,8 +177,8 @@ class Application(tk.Tk):
             return
         
         # Append ADB connection status to the console
-        self.console.append_log("ADB Connection Status:\n", 'log')
-        self.console.append_log(output, 'info')
+        self.console.append_log("ADB Connection Status:", 'log')
+        self.console.append_log(output, 'log')
 
 if __name__ == "__main__":
     app = Application()

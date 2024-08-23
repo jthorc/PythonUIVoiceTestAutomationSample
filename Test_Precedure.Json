@@ -1,0 +1,47 @@
+{
+    "test_case_1": [
+        {
+            "step": 1,
+            "action": "Voice Invoke",
+            "object": "Alexa",
+            "content": "What is the weather",
+            "needimg": "True",
+            "outputimage": "Invoke_Alexa_ask_weather",
+            "time": 10,
+            "city": "New York"
+        },
+        {
+            "step": 2,
+            "action": "Click",
+            "object": "Alexa",
+            "content": "Cancel-Button",
+            "needimg": "True",
+            "outputimage": "Click_Cancel_Button",
+            "time": 10,
+            "city": "New York"
+        }
+    ],
+
+    "test_case_2": [
+        {
+            "step": 1,
+            "action": "Voice Invoke",
+            "object": "Google",
+            "content": "What is the weather",
+            "needimg": "True",
+            "outputimage": "Invoke_Alexa_ask_weather",
+            "time": 10,
+            "city": "New York"
+        },
+        {
+            "step": 2,
+            "action": "Click",
+            "content": "Cancel-Button",
+            "object": "Google",
+            "needimg": "True",
+            "outputimage": "Click_Cancel_Button",
+            "time": 10,
+            "city": "New York"
+        }
+    ]
+}
