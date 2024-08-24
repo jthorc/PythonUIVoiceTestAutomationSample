@@ -9,6 +9,7 @@ from tkinter import filedialog
 import json
 import datetime
 import time
+import os
 
 class Console(tk.Text):
     def __init__(self, master=None, **kwargs):
@@ -127,7 +128,7 @@ class Application(tk.Tk):
         self.console.config(state=tk.DISABLED)
     
     def read_test_procedure(self):
-        initial_directory = r'C:\Users\jiang\Documents\GitHub\Shuochengwork'
+        initial_directory = os.getcwd()
         # Open file dialog to select a JSON file
         file_path = filedialog.askopenfilename(
             initialdir=initial_directory,
@@ -179,6 +180,8 @@ class Application(tk.Tk):
         # Append ADB connection status to the console
         self.console.append_log("ADB Connection Status:", 'log')
         self.console.append_log(output, 'log')
+
+
 
 if __name__ == "__main__":
     app = Application()
