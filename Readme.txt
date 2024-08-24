@@ -1,5 +1,5 @@
 Project Title: 
-UI & Voice Recognizion Automation Tool Example (Demo)
+UI & Voice Recognizion Automation Tool Example (Just for Demo)
 
 Project Description: 
 This Automation Tool was developed to run regression test on Android Platform
@@ -12,7 +12,7 @@ Usage:
 Run the Main UI exe file
 
 Features: 
-ADB control; Image comparision; Customize the test cases; running Regression test; Read bar code; Voice invoke Voice Assistant 
+ADB control; Image comparision; Customize the test cases; running Regression test; Read bar code; Voice invoke Voice Assistant; Voice Recognizion 
 
 Requirements/Dependencies: 
 Please refer to the lib list in installlib

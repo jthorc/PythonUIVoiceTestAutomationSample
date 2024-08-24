@@ -12,3 +12,6 @@ pip install opencv-python scikit-image numpy
 
 echo install QR bar code web login lib
 pip install pyzbar requests selenium
+
+echo install voiceRec
+pip install SpeechRecognition pyaudio
