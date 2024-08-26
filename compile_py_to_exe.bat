@@ -21,6 +21,8 @@ REM Move and rename the executable
 echo Moving and renaming executable...
 move /Y "%source_dir%\Main_UI.exe" "%destination_dir%\%new_exe_name%"
 
+set "target_path=%destination_dir%\%new_exe_name%" 
+
 REM Check if the move was successful
 if %ERRORLEVEL% neq 0 (
     echo Failed to move or rename the executable.
@@ -29,12 +31,13 @@ if %ERRORLEVEL% neq 0 (
 
 REM Create a shortcut on the desktop
 echo Creating shortcut on the desktop...
-REM powershell -command "$s=(New-Object -COM WScript.Shell).CreateShortcut('$env:USERPROFILE\Desktop\%desktop_shortcut_name%'); $s.TargetPath='%cd%\%new_exe_name%'; $s.Save()"
+powershell -command "$desktopShortcutName = '%desktop_shortcut_name%'; $exeName = '%new_exe_name%'; $desktopPath = [System.IO.Path]::Combine($env:USERPROFILE, 'Desktop', $desktopShortcutName); $exePath = [System.IO.Path]::Combine([System.IO.Directory]::GetCurrentDirectory(), $exeName); $s = (New-Object -COM WScript.Shell).CreateShortcut($desktopPath); $s.TargetPath = $exePath; $s.Save()"
+
 
 REM Delete the build directory and other temporary files
 echo Cleaning up build files...
 rmdir /s /q build
-REM rmdir /s /q dist
+rmdir /s /q dist
 del /q Main_UI.spec
 
 REM Optional: Pause to keep the command window open
