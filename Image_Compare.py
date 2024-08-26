@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from skimage.metrics import structural_similarity as ssim
+import os
 
 class ImageComparer:
     def __init__(self, image_path1, image_path2):
@@ -51,11 +52,15 @@ class ImageComparer:
 
 # Example usage
 if __name__ == "__main__":
+    current_dir = os.getcwd()
+    base_img_full_path = os.path.join(current_dir, "base_image","200727195059.JPEG")
+    target_img_full_path = os.path.join(current_dir, "target_image","201904110209.JPEG")
+    output_img_full_path = os.path.join(current_dir, "imgc_result", "Output_image.png")
     # Replace 'image1.png' and 'image2.png' with paths to your images
-    comparer = ImageComparer('image1.png', 'image2.png')
+    comparer = ImageComparer(base_img_full_path, target_img_full_path)
 
     # Compare the images, highlight differences, and save the result
-    similarity_score = comparer.compare_and_highlight('comparison_output.png')
+    similarity_score = comparer.compare_and_highlight(output_img_full_path)
     print(f"Similarity score: {similarity_score:.4f}")
 
     if similarity_score > 0.9:
