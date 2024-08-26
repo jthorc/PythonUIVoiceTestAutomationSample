@@ -1,3 +1,5 @@
+import time
+
 class Person:
     def __init__(self, name, age):
         self.name = name  # Attribute
@@ -24,7 +26,7 @@ for test_case, steps in data.items():
     
     # Iterate through each step in the test case
     for step in steps:
-        action = step['action']
-        print(f"Step {step['step']}: {action}")
+        #action = step['action']
+        print(f"Step {step['step']}: {step['action']} {step['object']}")
     
     print()  # Add a blank line between test cases
