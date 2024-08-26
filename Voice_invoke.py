@@ -1,4 +1,5 @@
 import pyttsx3
+import time
 
 class TextToSpeech:
     def __init__(self, voice=0, rate=150, volume=1.0):
@@ -37,6 +38,7 @@ if __name__ == "__main__":
     tts = TextToSpeech(voice=1, rate=150, volume=1.0)
     tts.speak("Alexa, tell me a joke")
     
+    time.sleep(2)
     # Change voice to male and speak again
     tts.set_voice(voice=0)
     tts.speak("Hey Google, what is the weather")
