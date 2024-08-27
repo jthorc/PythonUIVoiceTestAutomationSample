@@ -10,6 +10,9 @@ import json
 import datetime
 import time
 import os
+import pygetwindow as gw
+from PIL import ImageGrab
+from datetime import datetime
 
 class Console(tk.Text):
     def __init__(self, master=None, **kwargs):
@@ -101,7 +104,7 @@ class Application(tk.Tk):
         self.console.grid(row=1, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
 
         # Create buttons and place them in the grid
-        log_button = ttk.Button(main_frame, text="Add Log", command=self.add_log_entry)
+        log_button = ttk.Button(main_frame, text="Take Screen Shot", command=self.take_screen_shot)
         log_button.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
 
         clear_button = ttk.Button(main_frame, text="Clear Log", command=self.clear_log_entry)
@@ -116,10 +119,33 @@ class Application(tk.Tk):
         check_system_time = ttk.Button(main_frame, text="Check Sys Time", command=self.check_sys_time)
         check_system_time.grid(row=2, column=4, padx=5, pady=5,sticky="nsew")
 
-    def add_log_entry(self):
+    def take_screen_shot(self):
+        current_dir = os.getcwd()
+        current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        output_img_full_path = os.path.join(current_dir, "imgc_result", f"active_window_screenshot_{current_time}.png")
+        output_img_path = os.path.join(current_dir, "imgc_result")
+
         # Example log entry
-        log_message = "This is a log message."
+        log_message = "Take a screen shot."
         self.console.append_log(f'{log_message}\n', 'log')
+        # Get the currently active window
+        active_window = gw.getActiveWindow()
+
+        if active_window:
+            # Get the bounding box of the active window
+            bbox = (active_window.left, active_window.top, active_window.right, active_window.bottom)
+            
+            # Capture the screenshot of the active window
+            screenshot = ImageGrab.grab(bbox)
+            # screenshot = ImageGrab.grab()
+
+            # Save the screenshot to a file
+            screenshot.save(output_img_full_path)
+            self.console.append_log(f"Screenshot {output_img_full_path} saved at: \n{output_img_path}","log")
+            subprocess.Popen(f'explorer {output_img_path}')
+        
+        else:
+            self.console.append_log("No active window found.","log")
 
     def clear_log_entry(self):
         # Clear the messages in the combined window

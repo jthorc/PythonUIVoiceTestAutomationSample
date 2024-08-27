@@ -15,3 +15,6 @@ pip install pyzbar requests selenium
 
 echo install voiceRec
 pip install SpeechRecognition pyaudio
+
+echo install pygetwindow
+pip install pygetwindow Pillow
