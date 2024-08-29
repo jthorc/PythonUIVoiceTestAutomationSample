@@ -7,7 +7,6 @@ from io import StringIO
 import subprocess
 from tkinter import filedialog
 import json
-import datetime
 import time
 import os
 import pygetwindow as gw
@@ -26,7 +25,7 @@ class Console(tk.Text):
         self.tag_configure('info', foreground='green')
         self.tag_configure('warning', foreground='orange')
 
-        self.prompt = "Live Log:\n"
+        self.prompt = "This is just a Python demo for Shuocheng's Automation tool\nRev:00\nModify date:2024/08/29\nLive Log:\n"
         self.console = code.InteractiveConsole()
         self.output_buffer = StringIO()
         self.update_prompt()
@@ -72,11 +71,13 @@ class Console(tk.Text):
 
     def append_log(self, message, tag=None):
         self.config(state=tk.NORMAL)
-        self.insert(tk.END, f'{message}\n', tag)
+        self.insert(tk.END, f'{Application.current_time}:{message}\n\n', tag)
         self.config(state=tk.DISABLED)
         self.see(tk.END)
 
 class Application(tk.Tk):
+    current_dir = os.getcwd()
+    current_time = datetime.now().strftime('%Y-%m-%d_%H%M%S')
     def __init__(self):
         super().__init__()
 
@@ -120,25 +121,26 @@ class Application(tk.Tk):
         check_system_time.grid(row=2, column=4, padx=5, pady=5,sticky="nsew")
 
     def take_screen_shot(self):
-        current_dir = os.getcwd()
-        current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        output_img_full_path = os.path.join(current_dir, "imgc_result", f"active_window_screenshot_{current_time}.png")
-        output_img_path = os.path.join(current_dir, "imgc_result")
+        output_img_name = f"Window_BackGround_{self.current_time}.png"
+        output_img_full_path = os.path.join(self.current_dir, "imgc_result", output_img_name)
+        output_img_path = os.path.join(self.current_dir, "imgc_result")
 
         # Example log entry
-        log_message = "Take a screen shot."
-        self.console.append_log(f'{log_message}\n', 'log')
+        log_message = "Taking a Screenshot......"
+        self.console.append_log(f'{log_message}', 'info')
         # Get the currently active window
+        screenshot = ImageGrab.grab()
+        # Save the screenshot to a file
+        screenshot.save(output_img_full_path)
+        self.console.append_log(f"Screenshot {output_img_name} saved at: \n{output_img_path}","log")
+        subprocess.Popen(f'explorer {output_img_path}')
+        '''
         active_window = gw.getActiveWindow()
-
         if active_window:
             # Get the bounding box of the active window
             bbox = (active_window.left, active_window.top, active_window.right, active_window.bottom)
-            
             # Capture the screenshot of the active window
             screenshot = ImageGrab.grab(bbox)
-            # screenshot = ImageGrab.grab()
-
             # Save the screenshot to a file
             screenshot.save(output_img_full_path)
             self.console.append_log(f"Screenshot {output_img_full_path} saved at: \n{output_img_path}","log")
@@ -146,7 +148,7 @@ class Application(tk.Tk):
         
         else:
             self.console.append_log("No active window found.","log")
-
+        '''
     def clear_log_entry(self):
         # Clear the messages in the combined window
         self.console.config(state=tk.NORMAL)
@@ -179,7 +181,7 @@ class Application(tk.Tk):
     def check_sys_time(self):
         try:
             # Get the current local time
-            current_time = datetime.datetime.now()
+            current_time = datetime.now()
             # Get the time zone offset from UTC (in seconds)
             time_zone_offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
             time_zone_offset_hours = time_zone_offset / 3600  # Convert to hours
@@ -204,8 +206,7 @@ class Application(tk.Tk):
             return
         
         # Append ADB connection status to the console
-        self.console.append_log("ADB Connection Status:", 'log')
-        self.console.append_log(output, 'log')
+        self.console.append_log(f"ADB Connection Status:\n{output}", 'log')
 
 
 
