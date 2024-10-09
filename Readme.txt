@@ -15,6 +15,6 @@ Features:
 ADB control; Image comparision; Customize the test cases; running Regression test; Read bar code; Voice invoke Voice Assistant; Voice Recognizion 
 
 Requirements/Dependencies: 
-Please refer to the lib list in installlib
+Please refer to the lib list in installlib. If you experience "pip is not recognized as an internal or external command", you can try to run it under \python\<Python_Version>\Scripts\.
 
 Authors/Contributors: Shuocheng Jiang

@@ -18,3 +18,12 @@ pip install SpeechRecognition pyaudio
 
 echo install pygetwindow
 pip install pygetwindow Pillow
+
+echo install numpy
+pip install numpy
+
+echo install opencv-python
+pip install opencv-python
+
+echo install scikit-image
+pip install scikit-image
