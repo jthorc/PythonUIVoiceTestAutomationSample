@@ -40,5 +40,5 @@ if __name__ == "__main__":
     
     time.sleep(2)
     # Change voice to male and speak again
-    tts.set_voice(voice=0)
+    tts.set_voice(voice=2)
     tts.speak("Hey Google, what is the weather")
