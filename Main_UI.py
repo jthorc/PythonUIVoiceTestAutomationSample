@@ -82,42 +82,25 @@ class Application(tk.Tk):
         super().__init__()
 
         self.title("Automation Panel")
-        self.geometry("650x500")
-
-        # Create the main frame
-        main_frame = ttk.Frame(self)
-        main_frame.grid(row=0, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
-
-        # Configure rows and columns in the grid
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-
-        main_frame.grid_rowconfigure(1, weight=1)
-        main_frame.grid_columnconfigure(0, weight=1)
-
-        # Create a Label widget
-        #label_0 = tk.Label(main_frame, text="Log:", font=("bold"), fg="Black")
-        # Place the Label in the window
-        #label_0.grid(row=0, column=0, sticky="W")
 
         # Create the combined log and console window (Text widget)
-        self.console = Console(main_frame, wrap=tk.WORD)
+        self.console = Console(self, wrap=tk.WORD)
         self.console.grid(row=1, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
 
         # Create buttons and place them in the grid
-        log_button = ttk.Button(main_frame, text="Take Screen Shot", command=self.take_screen_shot)
+        log_button = ttk.Button(self, text="Take Screen Shot", command=self.take_screen_shot)
         log_button.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
 
-        clear_button = ttk.Button(main_frame, text="Clear Log", command=self.clear_log_entry)
+        clear_button = ttk.Button(self, text="Clear Log", command=self.clear_log_entry)
         clear_button.grid(row=2, column=1, padx=5, pady=5,sticky="nsew")
 
-        adb_button = ttk.Button(main_frame, text="Check ADB Connection", command=self.check_adb_connection)
+        adb_button = ttk.Button(self, text="Check ADB Connection", command=self.check_adb_connection)
         adb_button.grid(row=2, column=2, padx=5, pady=5,sticky="nsew")
 
-        read_button = ttk.Button(main_frame, text="Read Test Procedure", command=self.read_test_procedure)
+        read_button = ttk.Button(self, text="Read Test Procedure", command=self.read_test_procedure)
         read_button.grid(row=2, column=3, padx=5, pady=5,sticky="nsew")
 
-        check_system_time = ttk.Button(main_frame, text="Check Sys Time", command=self.check_sys_time)
+        check_system_time = ttk.Button(self, text="Check Sys Time", command=self.check_sys_time)
         check_system_time.grid(row=2, column=4, padx=5, pady=5,sticky="nsew")
 
     def take_screen_shot(self):
@@ -200,13 +183,19 @@ class Application(tk.Tk):
         try:
             result = subprocess.run(command, capture_output=True, text=True, check=True)
             output = result.stdout
-        except subprocess.CalledProcessError as e:
-            output = f"Error checking ADB connection: {e}\n{e.output}"
-            self.console.append_log(output, 'error')
-            return
+            # Append ADB connection status to the console
+            self.console.append_log(f"ADB Connection Status:\n{output}", 'log')
+            
+            if len(output)>26:
+                return True
+            else:
+                return False
+        except Exception as e:
+            #output = f"Error checking ADB connection: {e}\n{e.output}"
+            self.console.append_log(e, 'error')
+            return False
         
-        # Append ADB connection status to the console
-        self.console.append_log(f"ADB Connection Status:\n{output}", 'log')
+
 
 
 
