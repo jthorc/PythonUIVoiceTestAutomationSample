@@ -103,6 +103,28 @@ class Application(tk.Tk):
         check_system_time = ttk.Button(self, text="Check Sys Time", command=self.check_sys_time)
         check_system_time.grid(row=2, column=4, padx=5, pady=5,sticky="nsew")
 
+        notebook = ttk.Notebook(self)
+        notebook.grid(row=3, column=0, columnspan=5, padx=10, pady=10,sticky="nsew")
+
+        # Create tabs
+        self.tab_1(notebook, "Tab 1")
+        self.tab_1(notebook, "Tab 2")
+        self.tab_1(notebook, "Tab 3")
+
+
+
+    def tab_1(self,notebook, tab_name):
+        # Create a frame for the tab
+        frame = ttk.Frame(notebook)
+        notebook.add(frame, text=tab_name)
+
+        # Add buttons to the frame, starting from row 2 (which is row index 1)
+        button1 = ttk.Button(frame, text=f"{tab_name} Button 1")
+        button1.grid(row=1, column=0, padx=10, pady=10)  # Row 1
+
+        button2 = ttk.Button(frame, text=f"{tab_name} Button 2")
+        button2.grid(row=2, column=0, padx=10, pady=10)  # Row 2
+
     def take_screen_shot(self):
         output_img_name = f"Window_BackGround_{self.current_time}.png"
         output_img_full_path = os.path.join(self.current_dir, "imgc_result", output_img_name)
