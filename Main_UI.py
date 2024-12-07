@@ -23,42 +23,75 @@ class Application(tk.Tk):
         self.log = self.console.append_log
 
         # Create buttons and place them in the grid
-        log_button = ttk.Button(self, text="Take Screen Shot", command=self.take_screen_shot)
-        log_button.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
-
         clear_button = ttk.Button(self, text="Clear Log", command=self.clear_log_entry)
-        clear_button.grid(row=2, column=1, padx=5, pady=5,sticky="nsew")
-
-        adb_button = ttk.Button(self, text="Check ADB Connection", command=self.check_adb_connection)
-        adb_button.grid(row=2, column=2, padx=5, pady=5,sticky="nsew")
-
-        read_button = ttk.Button(self, text="Read Test Procedure", command=self.read_test_procedure)
-        read_button.grid(row=2, column=3, padx=5, pady=5,sticky="nsew")
-
-        check_system_time = ttk.Button(self, text="Check Sys Time", command=self.check_sys_time)
-        check_system_time.grid(row=2, column=4, padx=5, pady=5,sticky="nsew")
+        clear_button.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
 
         notebook = ttk.Notebook(self)
-        notebook.grid(row=3, column=0, columnspan=5, padx=10, pady=10,sticky="nsew")
+        notebook.grid(row=3, column=0, columnspan=5, padx=5, pady=5,sticky="nsew")
 
         # Create tabs
-        self.tab_1(notebook, "Tab 1")
-        self.tab_1(notebook, "Tab 2")
-        self.tab_1(notebook, "Tab 3")
+        self.operation_tab(notebook, "Operation")
+        self.communication_tab(notebook, "Communication")
+        self.test_tab(notebook, "Test")
 
-
-
-    def tab_1(self,notebook, tab_name):
+    def operation_tab(self,notebook, tab_name):
         # Create a frame for the tab
         frame = ttk.Frame(notebook)
         notebook.add(frame, text=tab_name)
+        log_button = ttk.Button(frame, text="Take Screen Shot", command=self.take_screen_shot)
+        log_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
+        check_system_time = ttk.Button(frame, text="Check Sys Time", command=self.check_sys_time)
+        check_system_time.grid(row=0, column=1, padx=5, pady=5,sticky="nsew")
 
-        # Add buttons to the frame, starting from row 2 (which is row index 1)
-        button1 = ttk.Button(frame, text=f"{tab_name} Button 1")
-        button1.grid(row=1, column=0, padx=10, pady=10)  # Row 1
+    def communication_tab(self,notebook, tab_name):
+        # Create a frame for the tab
+        frame = ttk.Frame(notebook)
+        notebook.add(frame, text=tab_name)
+        adb_button = ttk.Button(frame, text="Check ADB Connection", command=self.check_adb_connection)
+        adb_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
 
-        button2 = ttk.Button(frame, text=f"{tab_name} Button 2")
-        button2.grid(row=2, column=0, padx=10, pady=10)  # Row 2
+    def test_tab(self,notebook, tab_name):
+        # Create a frame for the tab
+        frame = ttk.Frame(notebook)
+        notebook.add(frame, text=tab_name)
+        read_button = ttk.Button(frame, text="Read Test Procedure", command=self.read_test_procedure)
+        read_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
+
+        # Add a label
+        label = ttk.Label(frame, text="Select an item from the list:")
+        label.grid(row=1, column=0, padx=5, pady=5,sticky="nsew")
+
+        # Add a Listbox
+        listbox = tk.Listbox(frame, selectmode=tk.MULTIPLE)  # SINGLE for single selection
+        listbox.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
+
+        # Add items to the Listbox
+        items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5","Item 6", "Item 7", "Item 8", "Item 9", "Item 10","Item 11", "Item 12", "Item 13", "Item 14", "Item 15"]
+        for item in items:
+            listbox.insert(tk.END, item)
+
+        # Add a label to show the selected item
+        result_label = ttk.Label(frame, text="Selected: None", background="lightgray")
+        result_label.grid(row=3, column=0, padx=5, pady=5,sticky="nsew")
+
+        text_entry = ttk.Entry(frame)
+        text_entry.insert(0, "default")  # Set the default value
+        text_entry.grid(row=4, column=0, padx=5, pady=5,sticky="nsew")
+
+        # Add a button to get the selected item
+        def show_selected_item():
+            selected_indices = listbox.curselection()  # Get selected indices
+            if selected_indices:
+                selected_item = [listbox.get(i) for i in selected_indices]  # Get the selected item
+                typed_text = text_entry.get()  # Get the text from the entry
+                result_label.config(text=f"Selected: {selected_item}, Typed: {typed_text}")
+            else:
+                result_label.config(text=f"Selected: None, Typed: None")
+
+        button = ttk.Button(frame, text="Show Selected", command=show_selected_item)
+        button.grid(row=4, column=1, padx=5, pady=5,sticky="nsew")
+
+
 
     def take_screen_shot(self):
         output_img_name = f"Window_BackGround_{self.current_time}.png"

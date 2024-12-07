@@ -1,33 +1,49 @@
 import tkinter as tk
-from log_widget import add_log  # Import the add_log class
+from tkinter import ttk
 
-class Application(tk.Tk):
-    def __init__(self):
-        super().__init__()
+# Create the main window
+window = tk.Tk()
+window.title("Multiple Selection Example")
+window.geometry("400x400")
 
-        self.title("Automation Panel")
-        self.geometry("650x500")
+# Add a label
+label = ttk.Label(window, text="Select items from the list:")
+label.pack(pady=10)
 
-        # Create the main frame
-        main_frame = tk.Frame(self)
-        main_frame.grid(row=0, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
+# Add a Listbox with multiple selection enabled
+listbox = tk.Listbox(window, selectmode=tk.MULTIPLE)  # MULTIPLE for multiple selections
+listbox.pack(pady=10, fill=tk.BOTH, expand=True)
 
-        # Configure rows and columns in the grid
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+# Add items to the Listbox
+items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]
+for item in items:
+    listbox.insert(tk.END, item)
 
-        main_frame.grid_rowconfigure(1, weight=1)
-        main_frame.grid_columnconfigure(0, weight=1)
+# Add a text entry area with a default value
+entry_label = ttk.Label(window, text="Type something:")
+entry_label.pack(pady=10)
 
-        # Create and place the add_log widget (Text widget)
-        self.Log = add_log(main_frame, wrap=tk.WORD)
-        self.Log.grid(row=1, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
+text_entry = ttk.Entry(window)
+text_entry.insert(0, "default")  # Set the default value
+text_entry.pack(pady=10, fill=tk.X)
 
-        # Example usage of append_log method
-        self.Log.append_log("This is an info message", 'info')
-        self.Log.append_log("This is a warning message", 'warning')
-        self.Log.append_log("This is an error message", 'error')
+# Add a label to show the selected items
+result_label = ttk.Label(window, text="Selected: None", background="lightgray")
+result_label.pack(pady=10, fill=tk.X)
 
-if __name__ == "__main__":
-    app = Application()
-    app.mainloop()
+# Add a button to get the selected items and entry value
+def show_selected_items():
+    selected_indices = listbox.curselection()  # Get selected indices
+    typed_text = text_entry.get()  # Get the text from the entry
+    
+    if selected_indices:
+        selected_items = [listbox.get(i) for i in selected_indices]  # Get all selected items
+        result_label.config(text=f"Selected: {', '.join(selected_items)}, Typed: {typed_text}")
+    else:
+        result_label.config(text=f"No items selected, Typed: {typed_text}")
+
+button = ttk.Button(window, text="Show Selected", command=show_selected_items)
+button.pack(pady=10)
+
+# Start the Tkinter event loop
+window.mainloop()
