@@ -1,6 +1,6 @@
 @echo off
 REM Change to the directory containing your Python script
-cd /d C:\Users\jiang\Documents\GitHub\Shuochengwork
+REM cd /d C:\Users\jiang\Documents\GitHub\Shuochengwork
 
 REM Use PyInstaller to compile the Python script to an executable
 pyinstaller --onefile --noconsole Main_UI.py
@@ -41,4 +41,4 @@ rmdir /s /q dist
 del /q Main_UI.spec
 
 REM Optional: Pause to keep the command window open
-pause
+cmd /k

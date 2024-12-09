@@ -62,7 +62,7 @@ class Application(tk.Tk):
         label.grid(row=1, column=0, padx=5, pady=5,sticky="nsew")
 
         # Add a Listbox
-        listbox = tk.Listbox(frame, selectmode=tk.MULTIPLE)  # SINGLE for single selection
+        listbox = tk.Listbox(frame, selectmode=tk.MULTIPLE,exportselection=False)  # SINGLE for single selection
         listbox.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
 
         # Add items to the Listbox
@@ -88,7 +88,7 @@ class Application(tk.Tk):
             else:
                 result_label.config(text=f"Selected: None, Typed: None")
 
-        button = ttk.Button(frame, text="Show Selected", command=show_selected_item)
+        button = ttk.Button(frame, text="Show Selected", command=lambda:show_selected_item)
         button.grid(row=4, column=1, padx=5, pady=5,sticky="nsew")
 
 
