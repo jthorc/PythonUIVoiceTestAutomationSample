@@ -62,8 +62,21 @@ class Application(tk.Tk):
         label.grid(row=1, column=0, padx=5, pady=5,sticky="nsew")
 
         # Add a Listbox
-        listbox = tk.Listbox(frame, selectmode=tk.MULTIPLE,exportselection=False)  # SINGLE for single selection
+        listbox = tk.Listbox(frame, selectmode=tk.SINGLE,exportselection=False)  # SINGLE for single selection
         listbox.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
+
+        selection_mode_var = tk.BooleanVar(value=False)  # Start with MULTIPLE mode
+
+        def toggle_selection_mode():
+            if selection_mode_var.get()==True:
+                listbox.config(selectmode=tk.MULTIPLE)
+            else:
+                listbox.config(selectmode=tk.SINGLE)
+
+        checkbox = ttk.Checkbutton(frame, text="Multiple Selection", variable=selection_mode_var, command=toggle_selection_mode)
+        checkbox.grid(row=2, column=2, padx=5, pady=5, sticky="w")
+
+
 
         # Add items to the Listbox
         items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5","Item 6", "Item 7", "Item 8", "Item 9", "Item 10","Item 11", "Item 12", "Item 13", "Item 14", "Item 15"]
@@ -72,7 +85,7 @@ class Application(tk.Tk):
 
         # Add a label to show the selected item
         result_label = ttk.Label(frame, text="Selected: None", background="lightgray")
-        result_label.grid(row=3, column=0, padx=5, pady=5,sticky="nsew")
+        result_label.grid(row=3, column=0, columnspan=5, padx=5, pady=5,sticky="nsew")
 
         text_entry = ttk.Entry(frame)
         text_entry.insert(0, "default")  # Set the default value
@@ -88,7 +101,8 @@ class Application(tk.Tk):
             else:
                 result_label.config(text=f"Selected: None, Typed: None")
 
-        button = ttk.Button(frame, text="Show Selected", command=lambda:show_selected_item)
+        #button = ttk.Button(frame, text="Show Selected", command=lambda:show_selected_item)
+        button = ttk.Button(frame, text="Show Selected", command=show_selected_item)
         button.grid(row=4, column=1, padx=5, pady=5,sticky="nsew")
 
 
