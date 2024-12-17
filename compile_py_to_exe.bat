@@ -31,7 +31,7 @@ if %ERRORLEVEL% neq 0 (
 
 REM Create a shortcut on the desktop
 echo Creating shortcut on the desktop...
-powershell -command "$desktopShortcutName = '%desktop_shortcut_name%'; $exeName = '%new_exe_name%'; $desktopPath = [System.IO.Path]::Combine($env:USERPROFILE, 'Desktop', $desktopShortcutName); $exePath = [System.IO.Path]::Combine([System.IO.Directory]::GetCurrentDirectory(), $exeName); $s = (New-Object -COM WScript.Shell).CreateShortcut($desktopPath); $s.TargetPath = $exePath; $s.Save()"
+powershell -command "$desktopShortcutName = '%desktop_shortcut_name%'; $exeName = '%new_exe_name%'; $desktopPath = [System.IO.Path]::Combine($env:USERPROFILE, 'Desktop', $desktopShortcutName); $exePath = [System.IO.Path]::Combine([System.IO.Directory]::GetCurrentDirectory(), $exeName); $s = (New-Object -COM WScript.Shell).CreateShortcut($desktopPath); $s.TargetPath = $exePath; $S.WorkingDirectory = [System.IO.Path]::GetDirectoryName($exePath); $s.Save()"
 
 
 REM Delete the build directory and other temporary files
