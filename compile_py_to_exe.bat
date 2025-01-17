@@ -3,7 +3,7 @@ REM Change to the directory containing your Python script
 REM cd /d C:\Users\jiang\Documents\GitHub\Shuochengwork
 
 REM Use PyInstaller to compile the Python script to an executable
-pyinstaller --onefile --noconsole Main_UI.py
+pyinstaller --onefile --icon=ico/ico.ico --noconsole Main_UI.py
 
 REM Check if the build was successful
 if %ERRORLEVEL% neq 0 (
