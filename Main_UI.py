@@ -5,7 +5,7 @@ from tkinter import filedialog
 import json
 import time
 import os
-from PIL import ImageGrab
+#from PIL import ImageGrab
 from datetime import datetime
 from log_console import Console
 
@@ -33,13 +33,15 @@ class Application(tk.Tk):
         self.operation_tab(notebook, "Operation")
         self.communication_tab(notebook, "Communication")
         self.test_tab(notebook, "Test")
+        self.log(f"Running at:{self.current_dir}","info")
+
 
     def operation_tab(self,notebook, tab_name):
         # Create a frame for the tab
         frame = ttk.Frame(notebook)
         notebook.add(frame, text=tab_name)
-        log_button = ttk.Button(frame, text="Take Screen Shot", command=self.take_screen_shot)
-        log_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
+        #log_button = ttk.Button(frame, text="Take Screen Shot", command=self.take_screen_shot)
+        #log_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
         check_system_time = ttk.Button(frame, text="Check Sys Time", command=self.check_sys_time)
         check_system_time.grid(row=0, column=1, padx=5, pady=5,sticky="nsew")
 
@@ -106,7 +108,7 @@ class Application(tk.Tk):
         button.grid(row=4, column=1, padx=5, pady=5,sticky="nsew")
 
 
-
+    '''
     def take_screen_shot(self):
         output_img_name = f"Window_BackGround_{self.current_time}.png"
         output_img_full_path = os.path.join(self.current_dir, "imgc_result", output_img_name)
@@ -121,7 +123,7 @@ class Application(tk.Tk):
         screenshot.save(output_img_full_path)
         self.log(f"Screenshot {output_img_name} saved at: \n{output_img_path}","log")
         subprocess.Popen(f'explorer {output_img_path}')
-
+    '''
     def clear_log_entry(self):
         # Clear the messages in the combined window
         self.console.config(state=tk.NORMAL)
