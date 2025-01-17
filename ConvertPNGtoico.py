@@ -1,5 +1,3 @@
-import sys
-print(sys.path)
 from PIL import Image
 
 # Path to the PNG file

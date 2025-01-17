@@ -9,6 +9,10 @@ import os
 from datetime import datetime
 from log_console import Console
 
+GLOBAL_VALUE = 'global value'
+# Set the working directory to the directory of the script
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 class Application(tk.Tk):
     current_dir = os.getcwd()
     current_time = datetime.now().strftime('%Y-%m-%d_%H%M%S')
