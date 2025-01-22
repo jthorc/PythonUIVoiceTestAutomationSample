@@ -5,11 +5,13 @@ from tkinter import filedialog
 import json
 import time
 import os
+import threading
 #from PIL import ImageGrab
 from datetime import datetime
 from log_console import Console
 
 GLOBAL_VALUE = 'global value'
+ADB_CONNECTION = 'adb connect 192.168.1.10'
 # Set the working directory to the directory of the script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -55,6 +57,10 @@ class Application(tk.Tk):
         notebook.add(frame, text=tab_name)
         adb_button = ttk.Button(frame, text="Check ADB Connection", command=self.check_adb_connection)
         adb_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
+
+        adb_c_button = ttk.Button(frame, text="excu_command", 
+                                  command=lambda:self.run_thru_Thread(self.excu_command,ADB_CONNECTION))
+        adb_c_button.grid(row=0, column=1, padx=5, pady=5,sticky="nsew")
 
     def test_tab(self,notebook, tab_name):
         # Create a frame for the tab
@@ -128,12 +134,39 @@ class Application(tk.Tk):
         self.log(f"Screenshot {output_img_name} saved at: \n{output_img_path}","log")
         subprocess.Popen(f'explorer {output_img_path}')
     '''
+    def run_thru_Thread(self, function, *args, **kwargs):
+        thread = threading.Thread(target=function,args=args,kwargs=kwargs)
+        thread.start()
+
     def clear_log_entry(self):
         # Clear the messages in the combined window
         self.console.config(state=tk.NORMAL)
         self.console.delete(1.0, tk.END)
         self.console.config(state=tk.DISABLED)
-    
+    def excu_command(self,command,run_path_cwd=None):
+        try:
+            self.log(f'{command}','info')
+            if run_path_cwd != None:
+                result = subprocess.run(command,
+                                        cwd=run_path_cwd,
+                                        shell=True,
+                                        capture_output=True,
+                                        text=True)
+            else:
+                result = subprocess.run(command,
+                                        shell=True,
+                                        capture_output=True,
+                                        text=True)
+            if result.stderr:
+                self.log(f'{result.stderr}','error')
+            else:
+                self.log(f'{result.stdout}','log')
+            return result.stdout
+        
+        except Exception as e:
+            self.log(f'{e}', 'error')
+            return 'error'
+        
     def read_test_procedure(self):
         initial_directory = os.getcwd()
         # Open file dialog to select a JSON file
