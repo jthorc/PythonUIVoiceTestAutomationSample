@@ -30,3 +30,6 @@ pip install scikit-image
 
 echo install psutil
 pip install psutil
+
+echo install pyserial
+pip install pyserial

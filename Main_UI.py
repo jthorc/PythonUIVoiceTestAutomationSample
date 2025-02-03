@@ -11,6 +11,8 @@ from datetime import datetime
 from log_console import Console
 import psutil
 import Global_Valuable
+#Todo
+import serial.tools.list_ports
 
 # Set the working directory to the directory of the script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
