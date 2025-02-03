@@ -109,11 +109,11 @@ class Application(tk.Tk):
         checkbox.grid(row=2, column=2, padx=5, pady=5, sticky="w")
 
 
-
+        self.detect_all_usb_ports(listbox)
         # Add items to the Listbox
-        items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5","Item 6", "Item 7", "Item 8", "Item 9", "Item 10","Item 11", "Item 12", "Item 13", "Item 14", "Item 15"]
-        for item in items:
-            listbox.insert(tk.END, item)
+        #items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5","Item 6", "Item 7", "Item 8", "Item 9", "Item 10","Item 11", "Item 12", "Item 13", "Item 14", "Item 15"]
+        #for item in items:
+        #    listbox.insert(tk.END, item)
 
         # Add a label to show the selected item
         result_label = ttk.Label(frame, text="Selected: None", background="lightgray")
@@ -151,6 +151,17 @@ class Application(tk.Tk):
         screenshot.save(output_img_full_path)
         self.log(f"Screenshot {output_img_name} saved at: \n{output_img_path}","log")
         subprocess.Popen(f'explorer {output_img_path}')
+
+    def detect_all_usb_ports(self,listbox):
+        try:
+            ports= serial.tools.list_ports.comports()
+            usb_ports = [port.description for port in ports]
+            for item in usb_ports:
+                if item not in listbox.get(0,tk.END):
+                    listbox.insert(tk.END, item)
+        except Exception as e:
+            self.log(f'{e}','error')
+  
 
     def run_thru_Thread(self, function, *args, **kwargs):
         thread = threading.Thread(target=function,args=args,kwargs=kwargs)
