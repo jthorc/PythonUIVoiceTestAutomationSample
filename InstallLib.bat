@@ -27,3 +27,6 @@ pip install opencv-python
 
 echo install scikit-image
 pip install scikit-image
+
+echo install psutil
+pip install psutil
