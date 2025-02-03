@@ -12,3 +12,4 @@ SCRCPY_EXE = 'scrcpy.exe'
 #RUN_SCRCPY = os.path.join(SCRCPY_FOLDER,SCRCPY_EXE) + "-s 192.168.1.10"
 RUN_SCRCPY = [os.path.join(SCRCPY_FOLDER,SCRCPY_EXE)]
 RUN_GITHUB = ['C:\\Users\\jiang\\AppData\\Local\\GitHubDesktop\\GitHubDesktop.exe']
+GITHUB_NAME = 'GitHubDesktop'

@@ -9,6 +9,7 @@ import threading
 from PIL import ImageGrab
 from datetime import datetime
 from log_console import Console
+import psutil
 import Global_Valuable
 
 # Set the working directory to the directory of the script
@@ -46,10 +47,18 @@ class Application(tk.Tk):
         notebook.add(frame, text=tab_name)
         log_button = ttk.Button(frame, text="Take Screen Shot", command=self.take_screen_shot)
         log_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
+
         check_system_time = ttk.Button(frame, text="Check Sys Time", command=self.check_sys_time)
         check_system_time.grid(row=0, column=1, padx=5, pady=5,sticky="nsew")
+
         github_button_time = ttk.Button(frame, text="github", command=lambda:self.run_thru_Thread(self.run_mult_cmds,Global_Valuable.RUN_GITHUB))
         github_button_time.grid(row=0, column=2, padx=5, pady=5,sticky="nsew")
+
+        check_process_button = ttk.Button(frame, text="check github", command=lambda:self.run_thru_Thread(self.check_process_by_name,Global_Valuable.GITHUB_NAME))
+        check_process_button.grid(row=0, column=3, padx=5, pady=5,sticky="nsew")
+
+        kill_process_button = ttk.Button(frame, text="kill github", command=lambda:self.run_thru_Thread(self.kill_process_by_name,Global_Valuable.GITHUB_NAME))
+        kill_process_button.grid(row=0, column=4, padx=5, pady=5,sticky="nsew")
 
     def communication_tab(self,notebook, tab_name):
         # Create a frame for the tab
@@ -204,6 +213,32 @@ class Application(tk.Tk):
                 self.run_thru_Thread(self.run_single_cmd,command,run_path_cwd)
             else:
                 self.run_single_cmd(command,run_path_cwd)
+
+    def check_process_by_name(self,process_name):
+        try:
+            output = os.popen(f'tasklist | findstr /I {process_name}').read()
+            if process_name in output:
+                self.log(str(output),'log')
+                self.log(f"{process_name} is running","log")
+                return True
+            else:
+                self.log(f"{process_name} is not running","warning")
+                return False
+        except Exception as e:
+            self.log(f"{e}","error")
+            return False
+        
+    def kill_process_by_name(self,process_name):
+        if self.check_process_by_name(process_name) == True:
+            try:
+                for proc in psutil.process_iter(['pid','name']):
+                    if process_name in proc.info['name']:
+                        proc.kill()
+                        self.log(f"process {process_name} (PID: {proc.info['name']} has been terminated)","log")
+            except Exception as e:
+                self.log(f"{e}","error")
+
+
 
 if __name__ == "__main__":
     app = Application()
