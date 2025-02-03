@@ -6,12 +6,11 @@ import json
 import time
 import os
 import threading
-#from PIL import ImageGrab
+from PIL import ImageGrab
 from datetime import datetime
 from log_console import Console
+import Global_Valuable
 
-GLOBAL_VALUE = 'global value'
-ADB_CONNECTION = 'adb connect 192.168.1.10'
 # Set the working directory to the directory of the script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -41,26 +40,36 @@ class Application(tk.Tk):
         self.test_tab(notebook, "Test")
         self.log(f"Running at:{self.current_dir}","info")
 
-
     def operation_tab(self,notebook, tab_name):
         # Create a frame for the tab
         frame = ttk.Frame(notebook)
         notebook.add(frame, text=tab_name)
-        #log_button = ttk.Button(frame, text="Take Screen Shot", command=self.take_screen_shot)
-        #log_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
+        log_button = ttk.Button(frame, text="Take Screen Shot", command=self.take_screen_shot)
+        log_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
         check_system_time = ttk.Button(frame, text="Check Sys Time", command=self.check_sys_time)
         check_system_time.grid(row=0, column=1, padx=5, pady=5,sticky="nsew")
+        github_button_time = ttk.Button(frame, text="github", command=lambda:self.run_thru_Thread(self.run_mult_cmds,Global_Valuable.RUN_GITHUB))
+        github_button_time.grid(row=0, column=2, padx=5, pady=5,sticky="nsew")
 
     def communication_tab(self,notebook, tab_name):
         # Create a frame for the tab
         frame = ttk.Frame(notebook)
         notebook.add(frame, text=tab_name)
-        adb_button = ttk.Button(frame, text="Check ADB Connection", command=self.check_adb_connection)
+        adb_button = ttk.Button(frame, text="ping ADB Connection", 
+                                command=lambda:self.run_thru_Thread(self.run_mult_cmds,Global_Valuable.PING_CONNECTION,Global_Valuable.PROJECT_ROOT))
         adb_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
 
-        adb_c_button = ttk.Button(frame, text="excu_command", 
-                                  command=lambda:self.run_thru_Thread(self.excu_command,ADB_CONNECTION))
+        adb_c_button = ttk.Button(frame, text="adb devices", 
+                                  command=lambda:self.run_thru_Thread(self.run_mult_cmds,Global_Valuable.ADB_DEVICES,Global_Valuable.PROJECT_ROOT))
         adb_c_button.grid(row=0, column=1, padx=5, pady=5,sticky="nsew")
+
+        adb_d_button = ttk.Button(frame, text="adb connection", 
+                                  command=lambda:self.run_thru_Thread(self.run_mult_cmds,Global_Valuable.ADB_CONNECTION,Global_Valuable.PROJECT_ROOT))
+        adb_d_button.grid(row=0, column=2, padx=5, pady=5,sticky="nsew")
+
+        adb_d_button = ttk.Button(frame, text="scrcpy", 
+                                  command=lambda:self.run_thru_Thread(self.run_mult_cmds,Global_Valuable.RUN_SCRCPY))
+        adb_d_button.grid(row=0, column=3, padx=5, pady=5,sticky="nsew")
 
     def test_tab(self,notebook, tab_name):
         # Create a frame for the tab
@@ -117,8 +126,6 @@ class Application(tk.Tk):
         button = ttk.Button(frame, text="Show Selected", command=show_selected_item)
         button.grid(row=4, column=1, padx=5, pady=5,sticky="nsew")
 
-
-    '''
     def take_screen_shot(self):
         output_img_name = f"Window_BackGround_{self.current_time}.png"
         output_img_full_path = os.path.join(self.current_dir, "imgc_result", output_img_name)
@@ -133,7 +140,7 @@ class Application(tk.Tk):
         screenshot.save(output_img_full_path)
         self.log(f"Screenshot {output_img_name} saved at: \n{output_img_path}","log")
         subprocess.Popen(f'explorer {output_img_path}')
-    '''
+
     def run_thru_Thread(self, function, *args, **kwargs):
         thread = threading.Thread(target=function,args=args,kwargs=kwargs)
         thread.start()
@@ -143,29 +150,6 @@ class Application(tk.Tk):
         self.console.config(state=tk.NORMAL)
         self.console.delete(1.0, tk.END)
         self.console.config(state=tk.DISABLED)
-    def excu_command(self,command,run_path_cwd=None):
-        try:
-            self.log(f'{command}','info')
-            if run_path_cwd != None:
-                result = subprocess.run(command,
-                                        cwd=run_path_cwd,
-                                        shell=True,
-                                        capture_output=True,
-                                        text=True)
-            else:
-                result = subprocess.run(command,
-                                        shell=True,
-                                        capture_output=True,
-                                        text=True)
-            if result.stderr:
-                self.log(f'{result.stderr}','error')
-            else:
-                self.log(f'{result.stdout}','log')
-            return result.stdout
-        
-        except Exception as e:
-            self.log(f'{e}', 'error')
-            return 'error'
         
     def read_test_procedure(self):
         initial_directory = os.getcwd()
@@ -203,27 +187,24 @@ class Application(tk.Tk):
         except Exception as e:
             self.log(f'error: {e}','error')
 
-
-
-    def check_adb_connection(self):
-        command = ['adb', 'devices']
-        command_title = 'Running adb command: ' 
-        self.log(f'{command_title} {command}', 'info')
+    def run_single_cmd(self, command, run_path_cwd=None):
         try:
-            result = subprocess.run(command, capture_output=True, text=True, check=True)
-            output = result.stdout
-            # Append ADB connection status to the console
-            self.log(f"ADB Connection Status:\n{output}", 'log')
-            
-            if len(output)>26:
-                return True
+            self.log(f'{command}','info')
+            feedback = subprocess.run(command, cwd=run_path_cwd,shell=True,capture_output=True,text=True)
+            if feedback.stderr:
+                self.log(f'{feedback.stderr}','error')
             else:
-                return False
+                self.log(f'{feedback.stdout}','log')
         except Exception as e:
-            #output = f"Error checking ADB connection: {e}\n{e.output}"
-            self.log(e, 'error')
-            return False
-        
+            self.log(f'{e}','error')
+
+    def run_mult_cmds(self, commands, run_path_cwd=None):
+        for command in commands:
+            if "adb connect" in command:
+                self.run_thru_Thread(self.run_single_cmd,command,run_path_cwd)
+            else:
+                self.run_single_cmd(command,run_path_cwd)
+
 if __name__ == "__main__":
     app = Application()
     app.mainloop()
