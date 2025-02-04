@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import Menu
 import subprocess
 from tkinter import filedialog
 import json
@@ -41,6 +42,7 @@ class Application(tk.Tk):
         self.operation_tab(notebook, "Operation")
         self.communication_tab(notebook, "Communication")
         self.test_tab(notebook, "Test")
+        self.audio_wav_generator_tab(notebook,"audio generator")
         self.log(f"Running at:{self.current_dir}","info")
 
     def operation_tab(self,notebook, tab_name):
@@ -136,6 +138,11 @@ class Application(tk.Tk):
         #button = ttk.Button(frame, text="Show Selected", command=lambda:show_selected_item)
         button = ttk.Button(frame, text="Show Selected", command=show_selected_item)
         button.grid(row=4, column=1, padx=5, pady=5,sticky="nsew")
+
+    def audio_wav_generator_tab(self,notebook,tab_name):
+        # Create a frame for the tab
+        frame = ttk.Frame(notebook)
+        notebook.add(frame, text=tab_name)
 
     def take_screen_shot(self):
         output_img_name = f"Window_BackGround_{self.current_time}.png"

@@ -1,22 +1,24 @@
-import sys
-print(sys.path)
-from PIL import Image
+import tkinter as tk
+from tkinter import Menu
 
-# Path to the PNG file
-png_file = "ico/ico.png"
+def callback():
+    print("Menu item clicked")
 
-# Path to save the ICO file
-ico_file = "ico/ico.ico"
+# Create the main window
+root = tk.Tk()
+root.title("Underscore Menu Example")
 
-# Convert PNG to ICO
-# You can specify the sizes for the ICO file (e.g., [16, 32, 48, 64])
-#icon_sizes = [(16, 16), (32, 32), (48, 48), (64, 64)]
+# Create a menu bar
+menu_bar = Menu(root)
 
-# Open the PNG image
-img = Image.open(png_file)
+# Create a "File" menu
+file_menu = Menu(menu_bar, tearoff=0)
+file_menu.add_command(label="Open", command=callback, underline=0)  # underline=0 means the first character is underscored
+file_menu.add_command(label="Save", command=callback, underline=0)
+file_menu.add_command(label="Exit", command=root.quit, underline=1)  # underline=1 means the second character is underscored
 
-# Save as ICO
-#img.save(ico_file, format='ICO', sizes=icon_sizes)
-img.save(ico_file, format='ICO')
+# Add the "File" menu to the menu bar
+menu_bar.add_cascade(label="File", menu=file_menu, underline=0)
 
-print(f"Converted {png_file} to {ico_file}")
+# Attach the menu bar to the window
+root.config(menu=menu_bar)
