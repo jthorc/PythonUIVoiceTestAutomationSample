@@ -271,7 +271,8 @@ class Application(tk.Tk):
                 self.log(f"{e}","error")
 
     def on_scale(self,value):
-        self.log(f"Scale value: {float(value)}",'log')
+        add_offset= int(float(value))+100
+        self.log(f"Scale value: {add_offset}",'log')
 
 if __name__ == "__main__":
     app = Application()
