@@ -84,6 +84,23 @@ class Application(tk.Tk):
                                   command=lambda:self.run_thru_Thread(self.run_mult_cmds,Global_Valuable.RUN_SCRCPY))
         adb_d_button.grid(row=0, column=3, padx=5, pady=5,sticky="nsew")
 
+        value_label = ttk.Label(frame, text="Change Volume:")
+        value_label.grid(row=1, column=0, padx=5, pady=5,sticky="nsew")
+        
+        current_value_label = ttk.Label(frame, text="Current Value: 0")
+        current_value_label.grid(row=1, column=1, padx=5, pady=5,sticky="nsew")
+        
+        scale = ttk.Scale(frame, from_=30, to=-127, orient='horizontal', command=lambda value:self.run_thru_Thread(self.on_scale,value))
+        scale.grid(row=2, column=0, columnspan=5, padx=5, pady=5,sticky="nsew")
+        
+        # Function to update the current value label
+        def update_label(event):
+            current_value_label.config(text=f"Current Value: {int(scale.get())}")
+
+        # Bind the update function to the scale
+        scale.bind("<Motion>", update_label)
+    
+
     def test_tab(self,notebook, tab_name):
         # Create a frame for the tab
         frame = ttk.Frame(notebook)
@@ -112,11 +129,6 @@ class Application(tk.Tk):
 
 
         self.detect_all_usb_ports(listbox)
-        # Add items to the Listbox
-        #items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5","Item 6", "Item 7", "Item 8", "Item 9", "Item 10","Item 11", "Item 12", "Item 13", "Item 14", "Item 15"]
-        #for item in items:
-        #    listbox.insert(tk.END, item)
-
         # Add a label to show the selected item
         result_label = ttk.Label(frame, text="Selected: None", background="lightgray")
         result_label.grid(row=3, column=0, columnspan=5, padx=5, pady=5,sticky="nsew")
@@ -143,6 +155,7 @@ class Application(tk.Tk):
         # Create a frame for the tab
         frame = ttk.Frame(notebook)
         notebook.add(frame, text=tab_name)
+        # Todo
 
     def take_screen_shot(self):
         output_img_name = f"Window_BackGround_{self.current_time}.png"
@@ -169,7 +182,6 @@ class Application(tk.Tk):
         except Exception as e:
             self.log(f'{e}','error')
   
-
     def run_thru_Thread(self, function, *args, **kwargs):
         thread = threading.Thread(target=function,args=args,kwargs=kwargs)
         thread.start()
@@ -258,7 +270,8 @@ class Application(tk.Tk):
             except Exception as e:
                 self.log(f"{e}","error")
 
-
+    def on_scale(self,value):
+        self.log(f"Scale value: {float(value)}",'log')
 
 if __name__ == "__main__":
     app = Application()

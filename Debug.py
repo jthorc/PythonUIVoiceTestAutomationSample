@@ -1,24 +1,31 @@
 import tkinter as tk
-from tkinter import Menu
+from tkinter import ttk
+import threading
 
-def callback():
-    print("Menu item clicked")
+def on_scale(value):
+    current_value_label.config(text=f"Current Volume: {int(float(value))}")
+    print(f"Volume set to: {value}")
+
+def run_thru_Thread(target, *args):
+    thread = threading.Thread(target=target, args=args)
+    thread.start()
 
 # Create the main window
 root = tk.Tk()
-root.title("Underscore Menu Example")
+root.title("Volume Control Example")
 
-# Create a menu bar
-menu_bar = Menu(root)
+# Create a label to display the value
+value_label = ttk.Label(root, text="Adjust the volume:")
+value_label.pack(pady=10)
 
-# Create a "File" menu
-file_menu = Menu(menu_bar, tearoff=0)
-file_menu.add_command(label="Open", command=callback, underline=0)  # underline=0 means the first character is underscored
-file_menu.add_command(label="Save", command=callback, underline=0)
-file_menu.add_command(label="Exit", command=root.quit, underline=1)  # underline=1 means the second character is underscored
+# Create a scale (slider) widget
+scale = ttk.Scale(root, from_=0, to=100, orient='horizontal', command=lambda value: run_thru_Thread(on_scale, value))
+scale.pack(fill=tk.X, padx=20, pady=10)
 
-# Add the "File" menu to the menu bar
-menu_bar.add_cascade(label="File", menu=file_menu, underline=0)
+# Create a label to show the current scale value
+current_value_label = ttk.Label(root, text="Current Volume: 0")
+current_value_label.pack(pady=10)
 
-# Attach the menu bar to the window
-root.config(menu=menu_bar)
+# Run the application
+root.mainloop()
+
