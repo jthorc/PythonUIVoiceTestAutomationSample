@@ -100,7 +100,6 @@ class Application(tk.Tk):
         # Bind the update function to the scale
         scale.bind("<Motion>", update_label)
     
-
     def test_tab(self,notebook, tab_name):
         # Create a frame for the tab
         frame = ttk.Frame(notebook)

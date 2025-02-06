@@ -39,3 +39,11 @@ python3 -m pip install opencv-python
 # Install scikit-image
 echo "Installing scikit-image..."
 python3 -m pip install scikit-image
+
+# Install psutil
+echo install psutil
+python3 -m pip install psutil
+
+# Install pyserical
+echo install pyserial
+python3 -m pip install pyserial
