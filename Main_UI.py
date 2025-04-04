@@ -7,13 +7,15 @@ import json
 import time
 import os
 import threading
-from PIL import ImageGrab
 from datetime import datetime
 from log_console import Console
 import psutil
 import Global_Valuable
 #Todo
 import serial.tools.list_ports
+import sys
+sys.path.append(os.path.join(os.getcwd(), 'support_files'))
+from support_files import basic_func
 
 # Set the working directory to the directory of the script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -26,14 +28,25 @@ class Application(tk.Tk):
 
         self.title("Automation Panel")
 
+        style = ttk.Style()
+        style.configure("red.TLabel",background="red", foreground="white", font=("Arial", 20))
+        style.configure("blue.TLabel",background="#87CEEB", foreground="black", font=("Arial", 20))
+
         # Create the combined log and console window (Text widget)
         self.console = Console(self, wrap=tk.WORD)
         self.console.grid(row=1, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
         self.log = self.console.append_log
 
+        # Running time
+        time_label = ttk.Label(self, text='1')
+        time_label.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
+
+        basic_func.time_update(self,time_label)
+        self.after(1000, lambda: basic_func.time_update(self, time_label))
+
         # Create buttons and place them in the grid
         clear_button = ttk.Button(self, text="Clear Log", command=self.clear_log_entry)
-        clear_button.grid(row=2, column=0, padx=5, pady=5,sticky="nsew")
+        clear_button.grid(row=2, column=1, padx=5, pady=5,sticky="nsew")
 
         notebook = ttk.Notebook(self)
         notebook.grid(row=3, column=0, columnspan=5, padx=5, pady=5,sticky="nsew")
@@ -49,7 +62,8 @@ class Application(tk.Tk):
         # Create a frame for the tab
         frame = ttk.Frame(notebook)
         notebook.add(frame, text=tab_name)
-        log_button = ttk.Button(frame, text="Take Screen Shot", command=self.take_screen_shot)
+        
+        log_button = ttk.Button(frame, text="Take Screen Shot", command=lambda:self.run_thru_Thread(basic_func.take_screen_shot,self.log))
         log_button.grid(row=0, column=0, padx=5, pady=5,sticky="nsew")
 
         check_system_time = ttk.Button(frame, text="Check Sys Time", command=self.check_sys_time)
@@ -156,21 +170,6 @@ class Application(tk.Tk):
         notebook.add(frame, text=tab_name)
         # Todo
 
-    def take_screen_shot(self):
-        output_img_name = f"Window_BackGround_{self.current_time}.png"
-        output_img_full_path = os.path.join(self.current_dir, "imgc_result", output_img_name)
-        output_img_path = os.path.join(self.current_dir, "imgc_result")
-
-        # Example log entry
-        log_message = "Taking a Screenshot......"
-        self.log(f'{log_message}', 'info')
-        # Get the currently active window
-        screenshot = ImageGrab.grab()
-        # Save the screenshot to a file
-        screenshot.save(output_img_full_path)
-        self.log(f"Screenshot {output_img_name} saved at: \n{output_img_path}","log")
-        subprocess.Popen(f'explorer {output_img_path}')
-
     def detect_all_usb_ports(self,listbox):
         try:
             ports= serial.tools.list_ports.comports()
@@ -268,6 +267,22 @@ class Application(tk.Tk):
                         self.log(f"process {process_name} (PID: {proc.info['name']} has been terminated)","log")
             except Exception as e:
                 self.log(f"{e}","error")
+
+    def save_logs(self,input):
+        try:
+            log_path = os.path.join(os.getcwd(),'log')
+            if not os.path.exists(log_path):
+                os.makedirs(log_path)
+                self.log(f"Created {log_path} for logs", 'info')
+            timestamp= datetime.now().strftime('%Y%m%d_%H%M%S')
+            log_file_full_path = os.path.join(log_path, f"{timestamp}_logs.txt")
+            with open(log_file_full_path,'w', encoding="utf-8") as log_file:
+                log_file.writelines(input)
+                self.log(f"Log has been saved to {log_path}","info")
+        except Exception as e:
+            self.log(f"{e}",'error')
+    
+
 
     def on_scale(self,value):
         add_offset= int(float(value))+100

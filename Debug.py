@@ -1,31 +1,32 @@
 import tkinter as tk
 from tkinter import ttk
-import threading
+import time
 
-def on_scale(value):
-    current_value_label.config(text=f"Current Volume: {int(float(value))}")
-    print(f"Volume set to: {value}")
+def time_update(self, label):
+    current_time = time.strftime("%H:%M:%S")
 
-def run_thru_Thread(target, *args):
-    thread = threading.Thread(target=target, args=args)
-    thread.start()
+    # Alternate style based on seconds (just for demo purposes)
+    current_style = "red.TLabel" if int(time.strftime("%S")) % 2 == 0 else "blue.TLabel"
 
-# Create the main window
-root = tk.Tk()
-root.title("Volume Control Example")
+    label.config(text=current_time, style=current_style)
+    self.after(1000, lambda: time_update(self, label))
 
-# Create a label to display the value
-value_label = ttk.Label(root, text="Adjust the volume:")
-value_label.pack(pady=10)
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Styled Clock")
+        self.geometry("300x100")
 
-# Create a scale (slider) widget
-scale = ttk.Scale(root, from_=0, to=100, orient='horizontal', command=lambda value: run_thru_Thread(on_scale, value))
-scale.pack(fill=tk.X, padx=20, pady=10)
+        # Use ttk style system
+        style = ttk.Style(self)
+        style.configure("red.TLabel", background="red", foreground="white", font=("Arial", 20))
+        style.configure("blue.TLabel", background="#87CEEB", foreground="black", font=("Arial", 20))
 
-# Create a label to show the current scale value
-current_value_label = ttk.Label(root, text="Current Volume: 0")
-current_value_label.pack(pady=10)
+        self.label = ttk.Label(self, text="", style="red.TLabel", anchor="center")
+        self.label.pack(expand=True, fill="both", padx=20, pady=20)
 
-# Run the application
-root.mainloop()
+        time_update(self, self.label)
 
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
