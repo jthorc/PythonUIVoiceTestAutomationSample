@@ -48,6 +48,9 @@ class Application(tk.Tk):
         clear_button = ttk.Button(self, text="Clear Log", command=self.clear_log_entry)
         clear_button.grid(row=2, column=1, padx=5, pady=5,sticky="nsew")
 
+        open_root_dir_button = ttk.Button(self, text="Open Root Directory", command=lambda:self.run_thru_Thread(basic_func.open_root_dir,self.log))
+        open_root_dir_button.grid(row=2, column=2, padx=5, pady=5,sticky="nsew")
+
         notebook = ttk.Notebook(self)
         notebook.grid(row=3, column=0, columnspan=5, padx=5, pady=5,sticky="nsew")
 

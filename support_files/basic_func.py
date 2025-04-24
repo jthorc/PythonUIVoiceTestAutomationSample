@@ -3,8 +3,21 @@ import subprocess
 from PIL import ImageGrab
 from datetime import datetime
 import time
+import Global_Valuable
+import platform
 current_dir = os.getcwd()
 current_time = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+
+def open_root_dir(log):
+    try:
+        if platform.system() == "Windows":
+            os.startfile(Global_Valuable.CURRENT_DIR)
+        elif platform.system() == "Darwin":  # macOS
+            subprocess.run(["open", Global_Valuable.CURRENT_DIR])
+        else:  # Linux and others
+            subprocess.run(["xdg-open", Global_Valuable.CURRENT_DIR])
+    except Exception as e:
+        log(f"{e}",'error')
 
 def take_screen_shot(log):
     output_img_name = f"Window_BackGround_{current_time}.png"

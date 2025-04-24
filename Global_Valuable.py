@@ -1,7 +1,11 @@
 import os
+from datetime import datetime
 
 PROJECT_ROOT = os.getcwd()
 ICO_PATH = os.path.join('ico')
+
+CURRENT_DIR = os.getcwd()
+CURRENT_TIME = datetime.now().strftime('%Y-%m-%d_%H%M%S')
 ADB_DEVICES = ['adb devices',
                   'adb root',
                   'adb remount']
