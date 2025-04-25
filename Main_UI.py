@@ -81,6 +81,9 @@ class Application(tk.Tk):
         kill_process_button = ttk.Button(frame, text="kill github", command=lambda:self.run_thru_Thread(self.kill_process_by_name,Global_Valuable.GITHUB_NAME))
         kill_process_button.grid(row=0, column=4, padx=5, pady=5,sticky="nsew")
 
+        set_configuration_button = ttk.Button(frame, text="set config", command=lambda:self.run_thru_Thread(self.run_single_cmd,Global_Valuable.RUN_CONFIG_EDITOR))
+        set_configuration_button.grid(row=0, column=4, padx=5, pady=5,sticky="nsew")
+
     def communication_tab(self,notebook, tab_name):
         # Create a frame for the tab
         frame = ttk.Frame(notebook)

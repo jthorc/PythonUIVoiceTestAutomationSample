@@ -1,6 +1,7 @@
 import json
 from tkinter import Tk, Label, Entry, Button, messagebox
 import os
+import Global_Valuable
 
 class ConfigEditor:
     def __init__(self, file_path):
@@ -35,10 +36,10 @@ class ConfigEditor:
 
         row = 0
         for key, value in self.config.items():
-            Label(root, text=key).grid(row=row, column=0)
-            entry = Entry(root)
+            Label(root, text=key).grid(row=row, column=0,sticky="nsw")
+            entry = Entry(root,width=30)
             entry.insert(0, str(value))
-            entry.grid(row=row, column=1)
+            entry.grid(row=row, column=1,sticky="nse")
             self.entries[key] = entry
             row += 1
 
@@ -48,7 +49,7 @@ class ConfigEditor:
 
 # Usage
 current_path = os.path.dirname(os.path.abspath(__file__))
-config_file = "Test_Precedure.Json"
+config_file = Global_Valuable.CONFIG_FILE_NAME
 full_path = os.path.join(current_path, config_file)
 print(full_path)
 editor = ConfigEditor(full_path)
